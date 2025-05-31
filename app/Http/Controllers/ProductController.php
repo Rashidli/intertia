@@ -10,6 +10,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::where('company_id', auth()->user()->company_id)->get();
+
         return inertia('Products/Index', compact('products'));
     }
 
@@ -22,10 +23,11 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0'
+            'price' => 'required|numeric|min:0',
         ]);
 
         Product::create($validated + ['company_id' => auth()->user()->company_id]);
+
         return redirect()->route('products.index');
     }
 
@@ -43,15 +45,17 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0'
+            'price' => 'required|numeric|min:0',
         ]);
         $product->update($validated);
+
         return redirect()->route('products.index');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
+
         return redirect()->route('products.index');
     }
 }

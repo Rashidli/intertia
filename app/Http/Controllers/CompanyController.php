@@ -10,6 +10,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companies = Company::all();
+
         return inertia('Companies/Index', compact('companies'));
     }
 
@@ -22,6 +23,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validate(['title' => 'required|string|max:255']);
         Company::create($validated);
+
         return redirect()->route('companies.index');
     }
 
@@ -39,12 +41,14 @@ class CompanyController extends Controller
     {
         $validated = $request->validate(['title' => 'required|string|max:255']);
         $company->update($validated);
+
         return redirect()->route('companies.index');
     }
 
     public function destroy(Company $company)
     {
         $company->delete();
+
         return redirect()->route('companies.index');
     }
 }
