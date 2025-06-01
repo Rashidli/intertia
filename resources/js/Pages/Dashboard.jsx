@@ -13,6 +13,7 @@ export default function Dashboard() {
         { day: 'Cümə', reservations: 18 },
         { day: 'Şənbə', reservations: 25 },
         { day: 'Bazar', reservations: 12 },
+
     ];
 
     const config = {
