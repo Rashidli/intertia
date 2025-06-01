@@ -11,13 +11,15 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::query()->with('company')->get();
-//        dd($products->toArray());
+
+        //        dd($products->toArray());
         return inertia('Products/Index', compact('products'));
     }
 
     public function create()
     {
         $companies = Company::all();
+
         return inertia('Products/Create', compact('companies'));
     }
 

@@ -10,6 +10,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companies = Company::query()->orderByDesc('id')->paginate(20);
+
         return inertia('Companies/Index', compact('companies'));
     }
 
