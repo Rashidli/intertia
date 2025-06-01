@@ -1,10 +1,8 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { Form, Input, Button, Typography } from 'antd';
+
+const { Title, Text } = Typography;
 
 export default function UpdatePasswordForm({ className = '' }) {
     const passwordInput = useRef();
@@ -24,21 +22,26 @@ export default function UpdatePasswordForm({ className = '' }) {
         password_confirmation: '',
     });
 
-    const updatePassword = (e) => {
-        e.preventDefault();
+    const [form] = Form.useForm();
+    const [showSaved, setShowSaved] = useState(false);
 
+    const updatePassword = () => {
         put(route('password.update'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
-            onError: (errors) => {
-                if (errors.password) {
+            onSuccess: () => {
+                reset();
+                setShowSaved(true);
+                setTimeout(() => setShowSaved(false), 3000);
+            },
+            onError: (errs) => {
+                if (errs.password) {
                     reset('password', 'password_confirmation');
-                    passwordInput.current.focus();
+                    passwordInput.current?.focus();
                 }
 
-                if (errors.current_password) {
+                if (errs.current_password) {
                     reset('current_password');
-                    currentPasswordInput.current.focus();
+                    currentPasswordInput.current?.focus();
                 }
             },
         });
@@ -46,97 +49,81 @@ export default function UpdatePasswordForm({ className = '' }) {
 
     return (
         <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Update Password
-                </h2>
+            <Title level={4}>Şifrəni Yenilə</Title>
+            <Text type="secondary">
+                Hesabınızın təhlükəsizliyi üçün uzun və təsadüfi şifrə istifadə edin.
+            </Text>
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
-                </p>
-            </header>
-
-            <form onSubmit={updatePassword} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel
-                        htmlFor="current_password"
-                        value="Current Password"
-                    />
-
-                    <TextInput
+            <Form
+                form={form}
+                layout="vertical"
+                onFinish={updatePassword}
+                style={{ marginTop: 16 }}
+                initialValues={{
+                    current_password: data.current_password,
+                    password: data.password,
+                    password_confirmation: data.password_confirmation,
+                }}
+            >
+                <Form.Item
+                    label="Cari Şifrə"
+                    validateStatus={errors.current_password ? 'error' : ''}
+                    help={errors.current_password}
+                    rules={[{ required: true, message: 'Cari şifrə tələb olunur' }]}
+                >
+                    <Input.Password
                         id="current_password"
                         ref={currentPasswordInput}
                         value={data.current_password}
-                        onChange={(e) =>
-                            setData('current_password', e.target.value)
-                        }
-                        type="password"
-                        className="mt-1 block w-full"
+                        onChange={(e) => setData('current_password', e.target.value)}
                         autoComplete="current-password"
+                        disabled={processing}
                     />
+                </Form.Item>
 
-                    <InputError
-                        message={errors.current_password}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password" value="New Password" />
-
-                    <TextInput
+                <Form.Item
+                    label="Yeni Şifrə"
+                    validateStatus={errors.password ? 'error' : ''}
+                    help={errors.password}
+                    rules={[{ required: true, message: 'Yeni şifrə tələb olunur' }]}
+                >
+                    <Input.Password
                         id="password"
                         ref={passwordInput}
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
                         autoComplete="new-password"
+                        disabled={processing}
                     />
+                </Form.Item>
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
-                    <TextInput
+                <Form.Item
+                    label="Şifrəni Təsdiqlə"
+                    validateStatus={errors.password_confirmation ? 'error' : ''}
+                    help={errors.password_confirmation}
+                    rules={[{ required: true, message: 'Şifrəni təsdiqləyin' }]}
+                >
+                    <Input.Password
                         id="password_confirmation"
                         value={data.password_confirmation}
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        type="password"
-                        className="mt-1 block w-full"
+                        onChange={(e) => setData('password_confirmation', e.target.value)}
                         autoComplete="new-password"
+                        disabled={processing}
                     />
+                </Form.Item>
 
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" loading={processing}>
+                        Yadda saxla
+                    </Button>
 
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">
-                            Saved.
-                        </p>
-                    </Transition>
-                </div>
-            </form>
+                    {showSaved && (
+                        <Text type="success" style={{ marginLeft: 16 }}>
+                            Yadda saxlanıldı.
+                        </Text>
+                    )}
+                </Form.Item>
+            </Form>
         </section>
     );
 }

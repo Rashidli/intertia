@@ -1,19 +1,28 @@
 // resources/js/Layouts/AuthenticatedLayout.jsx
 
-import { Layout, Menu } from 'antd';
+import React, { useState } from 'react';
 import {
-    HomeOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    UserOutlined,
+    LogoutOutlined,
     ApartmentOutlined,
+    HomeOutlined,
+    DownOutlined,
 } from '@ant-design/icons';
+import { Layout, Menu, Button, Dropdown, Space, Avatar, theme } from 'antd';
 import { Link, usePage } from '@inertiajs/react';
 
-const { Header, Content, Sider, Footer } = Layout;
+const { Header, Sider, Content } = Layout;
 
-export default function AuthenticatedLayout({ children, header }) {
+export default function AuthenticatedLayout({ children }) {
     const { auth } = usePage().props;
+    const [collapsed, setCollapsed] = useState(false);
+    const {
+        token: { colorBgContainer, borderRadiusLG },
+    } = theme.useToken();
 
-    // Yeni Menu strukturu (items array)
-    const menuItems = [
+    const sidebarItems = [
         {
             key: 'dashboard',
             icon: <HomeOutlined />,
@@ -31,32 +40,99 @@ export default function AuthenticatedLayout({ children, header }) {
         },
     ];
 
+    const userMenu = {
+        items: [
+            {
+                key: 'profile',
+                icon: <UserOutlined />,
+                label: <Link href={route('profile.edit')}>Profil</Link>,
+            },
+            {
+                type: 'divider',
+            },
+            {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: (
+                    <Link href={route('logout')} method="post" >
+                        <Button icon={<LogoutOutlined />}></Button>
+                    </Link>
+                ),
+            },
+        ],
+    };
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Sider breakpoint="lg" collapsedWidth="0">
-                <div className="text-white text-center text-lg font-bold py-4">
-                    Admin Panel
+            <Sider trigger={null} collapsible collapsed={collapsed}>
+                <div
+                    style={{
+                        height: 64,
+                        margin: 16,
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                    }}
+                >
+                    Reservation
                 </div>
                 <Menu
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['dashboard']}
-                    items={menuItems}
+                    items={sidebarItems}
                 />
             </Sider>
 
             <Layout>
-                <Header className="bg-white shadow px-6">
-                    <div className="text-xl font-semibold">{header}</div>
+                <Header
+                    style={{
+                        padding: '0 16px',
+                        background: colorBgContainer,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Button
+                        type="text"
+                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        onClick={() => setCollapsed(!collapsed)}
+                        style={{
+                            fontSize: '16px',
+                            width: 48,
+                            height: 48,
+                        }}
+                    />
+
+                    <Dropdown menu={userMenu} placement="bottomRight">
+                        <Space className="cursor-pointer">
+                            <Avatar
+                                icon={<UserOutlined />}
+                                src={auth.user.profile_photo_url}
+                                alt={auth.user.name}
+                            />
+                            <span>{auth.user.name}</span>
+                            <DownOutlined style={{ fontSize: 10 }} />
+                        </Space>
+                    </Dropdown>
                 </Header>
 
-                <Content className="m-6">
-                    <div className="p-6 bg-white rounded shadow-sm min-h-[300px]">
-                        {children}
-                    </div>
+                <Content
+                    style={{
+                        margin: '24px 16px',
+                        padding: 24,
+                        minHeight: 280,
+                        background: colorBgContainer,
+                        borderRadius: borderRadiusLG,
+                    }}
+                >
+                    {children}
                 </Content>
-
-                <Footer className="text-center">© 2025 Brendoo Panel</Footer>
             </Layout>
         </Layout>
     );

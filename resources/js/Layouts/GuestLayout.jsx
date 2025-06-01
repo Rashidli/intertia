@@ -1,18 +1,29 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
+import { Layout, Card } from 'antd';
+// import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
+
+const { Content } = Layout;
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+        <Layout style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+            <Content className="flex flex-col items-center justify-center pt-12 sm:pt-0">
+                {/*<div className="mb-6">*/}
+                {/*    <Link href="/">*/}
+                {/*        <ApplicationLogo className="h-20 w-20 text-gray-500" />*/}
+                {/*    </Link>*/}
+                {/*</div>*/}
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
-            </div>
-        </div>
+                <Card
+                    className="w-full sm:max-w-md"
+                    style={{
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        borderRadius: '8px',
+                    }}
+                >
+                    {children}
+                </Card>
+            </Content>
+        </Layout>
     );
 }

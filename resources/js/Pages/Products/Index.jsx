@@ -18,6 +18,10 @@ export default function Index() {
             dataIndex: 'price',
         },
         {
+            title: 'Şirkət',
+            dataIndex: ['company','title'],
+        },
+        {
             title: 'Əməliyyatlar',
             render: (_, record) => (
                 <Space>

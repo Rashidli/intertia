@@ -1,10 +1,9 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import { useForm } from '@inertiajs/react';
+import { Form, Input, Checkbox, Button, Alert, Typography } from 'antd';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+
+const { Text } = Typography;
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -13,9 +12,7 @@ export default function Login({ status, canResetPassword }) {
         remember: false,
     });
 
-    const submit = (e) => {
-        e.preventDefault();
-
+    const submit = () => {
         post(route('login'), {
             onFinish: () => reset('password'),
         });
@@ -26,75 +23,80 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
+                <Alert
+                    message={status}
+                    type="success"
+                    className="mb-4"
+                    showIcon
+                />
             )}
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
+            <Form
+                layout="vertical"
+                onFinish={submit}
+                initialValues={{
+                    remember: data.remember,
+                }}
+            >
+                <Form.Item
+                    label="Email"
+                    validateStatus={errors.email ? 'error' : ''}
+                    help={errors.email}
+                >
+                    <Input
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
+                        autoComplete="username"
                     />
+                </Form.Item>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
+                <Form.Item
+                    label="Password"
+                    validateStatus={errors.password ? 'error' : ''}
+                    help={errors.password}
+                >
+                    <Input.Password
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
+                        autoComplete="current-password"
                     />
+                </Form.Item>
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
+                <Form.Item name="remember" valuePropName="checked">
+                    <Checkbox
+                        checked={data.remember}
+                        onChange={(e) =>
+                            setData('remember', e.target.checked)
+                        }
+                    >
+                        Remember me
+                    </Checkbox>
+                </Form.Item>
 
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                <Form.Item>
+                    <div className="flex justify-between items-center">
+                        {canResetPassword && (
+                            <Link
+                                href={route('password.request')}
+                                className="text-sm text-gray-600 hover:text-gray-900"
+                            >
+                                Forgot your password?
+                            </Link>
+                        )}
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={processing}
                         >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
+                            Log in
+                        </Button>
+                    </div>
+                </Form.Item>
+            </Form>
         </GuestLayout>
     );
 }

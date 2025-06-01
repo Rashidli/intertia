@@ -1,5 +1,7 @@
-import { Link, usePage } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Link, usePage, router } from '@inertiajs/react';
 import { Table, Button, Space } from 'antd';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 
 export default function Index() {
     const { companies } = usePage().props;
@@ -18,34 +20,54 @@ export default function Index() {
             render: (_, record) => (
                 <Space>
                     <Link href={route('companies.edit', record.id)}>
-                        <Button type="link">Redaktə</Button>
+                        <Button type="primary" icon={<EditOutlined />} />
                     </Link>
-                    <Link href={route('companies.show', record.id)}>
-                        <Button type="link">Bax</Button>
-                    </Link>
+
                     <Link
                         href={route('companies.destroy', record.id)}
                         method="delete"
                         as="button"
-                        onBefore={() => confirm('Delete this post?')}>
-                        Sil
+                        onBefore={() => confirm('Şirkəti silmək istədiyinizə əminsiniz?')}
+                    >
+                        <DeleteOutlined />
                     </Link>
-
                 </Space>
             ),
         },
     ];
 
-    return (
-        <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-bold">Şirkətlər</h1>
-                <Link href={route('companies.create')}>
-                    <Button type="primary">Yeni Şirkət</Button>
-                </Link>
-            </div>
+    const handleTableChange = (pagination) => {
+        router.get(
+            route('companies.index'),
+            { page: pagination.current },
+            { preserveState: true, replace: true }
+        );
+    };
 
-            <Table dataSource={companies} columns={columns} rowKey="id" />
-        </div>
+    return (
+        <AuthenticatedLayout>
+            <div style={{ padding: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                    <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Şirkətlər</h1>
+                    <Link href={route('companies.create')}>
+                        <Button type="primary" icon={<PlusOutlined />}>Əlavə et</Button>
+                    </Link>
+                </div>
+
+                <Table
+                    bordered
+                    dataSource={companies.data}
+                    columns={columns}
+                    rowKey="id"
+                    pagination={{
+                        current: companies.current_page,
+                        pageSize: companies.per_page,
+                        total: companies.total,
+                        showSizeChanger: false,
+                    }}
+                    onChange={handleTableChange}
+                />
+            </div>
+        </AuthenticatedLayout>
     );
 }

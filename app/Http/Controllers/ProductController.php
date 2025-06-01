@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -9,14 +10,15 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::where('company_id', auth()->user()->company_id)->get();
-
+        $products = Product::query()->with('company')->get();
+//        dd($products->toArray());
         return inertia('Products/Index', compact('products'));
     }
 
     public function create()
     {
-        return inertia('Products/Create');
+        $companies = Company::all();
+        return inertia('Products/Create', compact('companies'));
     }
 
     public function store(Request $request)
@@ -24,9 +26,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'company_id' => 'required',
         ]);
 
-        Product::create($validated + ['company_id' => auth()->user()->company_id]);
+        Product::create($validated);
 
         return redirect()->route('products.index');
     }
@@ -46,6 +49,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'company_id' => 'required',
         ]);
         $product->update($validated);
 
