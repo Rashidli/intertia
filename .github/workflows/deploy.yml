@@ -20,6 +20,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 91.228.153.121 >> ~/.ssh/known_hosts
 
+      - name: Debug SSH handshake
+        run: |
+          ssh -vvv -i ~/.ssh/id_rsa root@91.228.153.121 exit
 
       - name: Deploy via SSH
         run: |
