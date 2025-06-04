@@ -25,6 +25,7 @@ jobs:
         run: |
           ssh root@91.228.153.121 << 'EOF'
             cd /home/cleancar/web/reservation.cleancar.az/public_html
+            echo "test Seymur"
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/id_rsa_microcode
             git pull origin main
