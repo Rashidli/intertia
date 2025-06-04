@@ -10,19 +10,19 @@ export default function Create() {
     });
 
     const submit = () => {
-        post(route('products.store'));
+        post(route('services.store'));
     };
 
     return (
         <AuthenticatedLayout>
             <Row>
                 <Col span={12}>
-                    <Card title="Yeni Məhsul Yarat" className="max-w-md mx-auto">
+                    <Card title="Yeni Xidmət Yarat" className="max-w-md mx-auto">
                         <Form layout="vertical" onFinish={submit}>
-                            <Form.Item label="Məhsul Adı" validateStatus={errors.title && 'error'} help={errors.title}>
+                            <Form.Item label="Xidmət Adı" validateStatus={errors.title && 'error'} help={errors.title}>
                                 <Input value={data.title} onChange={e => setData('title', e.target.value)} />
                             </Form.Item>
-                            <Form.Item label="Məhsul qiyməti" validateStatus={errors.price && 'error'} help={errors.price}>
+                            <Form.Item label="Xidmət qiyməti" validateStatus={errors.price && 'error'} help={errors.price}>
                                 <Input value={data.price} onChange={e => setData('price', e.target.value)} />
                             </Form.Item>
                             <Form.Item>

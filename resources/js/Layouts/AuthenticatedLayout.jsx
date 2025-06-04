@@ -38,6 +38,16 @@ export default function AuthenticatedLayout({ children }) {
             icon: <ApartmentOutlined />,
             label: <Link href={route('products.index')}>Məhsullar</Link>,
         },
+        {
+            key: 'customer',
+            icon: <ApartmentOutlined />,
+            label: <Link href={route('customers.index')}>Müştərilər</Link>,
+        },
+        {
+            key: 'services',
+            icon: <ApartmentOutlined />,
+            label: <Link href={route('services.index')}>Xidmətlər</Link>,
+        },
     ];
 
     const userMenu = {

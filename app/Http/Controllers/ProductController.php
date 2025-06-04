@@ -10,17 +10,15 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::query()->with('company')->get();
+        $products = Product::query()->paginate(15);
 
-        //        dd($products->toArray());
         return inertia('Products/Index', compact('products'));
     }
 
     public function create()
     {
-        $companies = Company::all();
 
-        return inertia('Products/Create', compact('companies'));
+        return inertia('Products/Create');
     }
 
     public function store(Request $request)
@@ -28,7 +26,6 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'company_id' => 'required',
         ]);
 
         Product::create($validated);
@@ -51,7 +48,6 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'company_id' => 'required',
         ]);
         $product->update($validated);
 
