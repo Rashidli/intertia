@@ -11,6 +11,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::query()->paginate(10);
+
         return Inertia::render('Services/Index', compact('services'));
     }
 
@@ -56,6 +57,7 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         $service->delete();
+
         return redirect()->route('services.index')->with('success', 'Service deleted.');
     }
 }
