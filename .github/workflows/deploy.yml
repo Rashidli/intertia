@@ -20,13 +20,15 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 91.228.153.121 >> ~/.ssh/known_hosts
 
+
       - name: Deploy via SSH
         run: |
           ssh root@91.228.153.121 << 'EOF'
             cd /home/cleancar/web/reservation.cleancar.az/public_html
-            eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/id_rsa_microcode
             git pull origin main
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+            php artisan migrate --force
+
 
           # ENV
             php artisan config:cache
