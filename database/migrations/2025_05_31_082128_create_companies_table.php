@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('logo')->nullable();
             $table->timestamps();
