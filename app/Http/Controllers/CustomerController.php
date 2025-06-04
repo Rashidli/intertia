@@ -11,6 +11,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::query()->paginate(10);
+
         return Inertia::render('Customers/Index', compact('customers'));
     }
 
@@ -62,6 +63,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
+
         return redirect()->route('customers.index')->with('success', 'Customer deleted.');
     }
 }

@@ -1,9 +1,8 @@
 <?php
+
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 trait BelongsToCompany
 {
@@ -11,7 +10,7 @@ trait BelongsToCompany
     {
         $user = request()->user();
 
-        if (!$user || $user->can('view_all_companies')) {
+        if (! $user || $user->can('view_all_companies')) {
             return;
         }
 
