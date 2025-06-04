@@ -20,25 +20,28 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 91.228.153.121 >> ~/.ssh/known_hosts
 
-
       - name: Deploy via SSH
         run: |
           ssh root@91.228.153.121 << 'EOF'
             cd /home/cleancar/web/reservation.cleancar.az/public_html
+
+            echo "👉 Pulling latest code..."
             git pull origin main
+
+            echo "👉 Installing backend dependencies..."
             composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            echo "👉 Running Laravel migrations..."
             php artisan migrate --force
 
-
-          # ENV
+            echo "👉 Caching configs..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
 
-            composer install --no-interaction --prefer-dist --optimize-autoloader
-          # FRONTEND
+            echo "👉 Installing frontend & building Vite assets..."
             npm install --legacy-peer-deps
             npm run build
 
-            php artisan migrate --force
+            echo "✅ Deployment finished!"
           EOF
