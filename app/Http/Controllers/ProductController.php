@@ -50,6 +50,7 @@ class ProductController extends Controller
         ]);
         $product->update($validated);
 
+
         return redirect()->route('products.index');
     }
 
